@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.wyyblog.dao.PermissionMapper">
+
+    <resultMap id="permission" type="top.wyyblog.entity.Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="resource" column="resource"/>
+    </resultMap>
+
+    <select id="save" resultMap="permission">
+        INSERT  INTO permission (name,resource) values (#{name},#{resource})
+    </select>
+
+    <select id="getPermissionResourceByUserId" resultType="string">
+        SELECT resource from permission where id in
+        (
+          SELECT permission_id from role_permission where role_id IN
+            (
+              SELECT role_id from user_role where user_id = #{id}
+            )
+        )
+    </select>
+
+    <select id="getAllPermissionResource" resultType="string">
+        SELECT resource FROM permission
+    </select>
+
+    
+</mapper>
